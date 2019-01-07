@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Passwords.Client.Views.CategoryShower"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Passwords.Client.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="200">
+    <Expander x:Name="exp" HorizontalContentAlignment="Stretch" Expanded="ExpExpanded" Collapsed="ExpCollapsed">
+        <Expander.Header>
+            <Grid x:Name="grdHeader">
+                <TextBlock x:Name="tbName">
+                    <TextBlock.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="重命名" Click="MenuItemRename_Click"/>
+                            <MenuItem Header="删除" Click="MenuItemDelete_Click"/>
+                            <MenuItem x:Name="menuItemAdd" Header="新建项目..."/>
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                </TextBlock>
+            </Grid>
+        </Expander.Header>
+        <Grid x:Name="grdContent">
+            <ListBox x:Name="lstItemName" Margin="20,0,0,0" BorderThickness="0" HorizontalContentAlignment="Stretch" SelectionChanged="LstItemName_SelectionChanged"/>
+        </Grid>
+    </Expander>
+</UserControl>
