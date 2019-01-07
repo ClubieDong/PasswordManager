@@ -24,7 +24,6 @@ namespace Passwords.Client
     {
         public Data Data = new Data();
         public Settings Settings;
-        // test
 
         public MainWindow()
         {
