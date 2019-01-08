@@ -272,7 +272,6 @@ namespace PasswordManager.Client.Views
             if (lstItemName.SelectedIndex==-1)
                 return;
             Item item = (lstItemName.SelectedItem as ItemNameShower).Item;
-            Data.EnrichItem(item);
             OnSelectItem?.Invoke(item);
             
             // 每次点击之后都不选中，避免问题

@@ -24,7 +24,7 @@ namespace PasswordManager.Client.Views
     {
         public Data Data;
         public Item Item;
-        
+
         /// <summary>
         /// 项目被保存后触发
         /// </summary>
@@ -50,6 +50,8 @@ namespace PasswordManager.Client.Views
             // 加载添加数据下拉框
             foreach (string i in ModelProvider.ItemDataNames)
                 cbxAdd.Items.Add(i);
+            btnSave.Click += (s, e) => Save();
+            btnCancel.Click += (s, e) => OnCancel?.Invoke();
         }
 
         /// <summary>
@@ -151,7 +153,6 @@ namespace PasswordManager.Client.Views
                 return false;
             }
             Data.SaveItem(Item);
-            ModelCopier.CopyItem(Item, LoadedItem);
             OnItemSaved?.Invoke(Item);
             return true;
         }
@@ -234,17 +235,6 @@ namespace PasswordManager.Client.Views
             }
 
             Refresh();
-        }
-
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
-        {
-            Save();
-        }
-
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            ModelCopier.CopyItem(LoadedItem, Item);
-            OnCancel?.Invoke();
         }
 
         private void TxtItemName_TextChanged(object sender, TextChangedEventArgs e)

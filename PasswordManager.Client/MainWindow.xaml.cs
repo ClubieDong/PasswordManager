@@ -147,18 +147,23 @@ namespace PasswordManager.Client
                         case MainWindowState.Locked:
                             throw new Exception("非法状态转移！");
                         case MainWindowState.Blank:
+                            Data.EnrichItem(item);
                             ShowItem(item);
                             State = MainWindowState.Showing;
                             break;
                         case MainWindowState.Showing:
                             if (item != ItemShown)
+                            {
+                                Data.EnrichItem(item);
                                 ShowItem(item);
+                            }
                             break;
                         case MainWindowState.Editing:
                         case MainWindowState.Adding:
                             if (ItemEdited != item && itemEditor.CanUnload())
                             {
                                 Unload();
+                                Data.EnrichItem(item);
                                 ShowItem(item);
                                 State = MainWindowState.Showing;
                             }
@@ -247,6 +252,7 @@ namespace PasswordManager.Client
                         case MainWindowState.Editing:
                         case MainWindowState.Adding:
                             Unload();
+                            Data.EnrichItem(ItemShown);
                             ShowItem(ItemShown);
                             State = MainWindowState.Showing;
                             break;

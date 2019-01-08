@@ -26,8 +26,8 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="标题：" FontSize="15" VerticalAlignment="Center"/>
             <TextBox x:Name="txtItemName" Grid.Column="1" FontSize="15" TextWrapping="Wrap" TextChanged="TxtItemName_TextChanged"/>
-            <Button x:Name="btnCancel" Grid.Column="3" Content="取消" Click="BtnCancel_Click"/>
-            <Button x:Name="btnSave" Grid.Column="4" Content="保存" Click="BtnSave_Click"/>
+            <Button x:Name="btnCancel" Grid.Column="3" Content="取消"/>
+            <Button x:Name="btnSave" Grid.Column="4" Content="保存"/>
         </Grid>
         <TextBlock x:Name="tbHint" Grid.Row="2" Margin="20,0,0,0"/>
         <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
