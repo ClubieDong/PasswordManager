@@ -25,13 +25,12 @@ namespace PasswordManager.Client.Views
         public Data Data;
         public Item Item;
 
-        public List<ItemDataShower> ItemDataShowers;
-
         /// <summary>
         /// 项目请求编辑时触发
         /// </summary>
         public event Action<Item> OnEdit;
-
+         
+        private List<ItemDataShower> ItemDataShowers;
         /// <summary>
         /// 项目是否已加载
         /// </summary>
@@ -77,15 +76,6 @@ namespace PasswordManager.Client.Views
             foreach (ItemDataShower i in ItemDataShowers)
                 stpItemData.Children.Add(i);
             IsItemLoaded = true;
-        }
-
-        /// <summary>
-        /// 判断能否写在项目，不会真的卸载
-        /// </summary>
-        public bool CanUnload()
-        {
-            // 无论何时都可以写在项目
-            return true;
         }
 
         /// <summary>

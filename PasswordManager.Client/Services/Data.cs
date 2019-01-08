@@ -314,30 +314,6 @@ namespace PasswordManager.Client.Services
             }
         }
         /// <summary>
-        /// 简化项目，即删去项目的数据
-        /// </summary>
-        /// <param name="item">要简化的项目</param>
-        public void SimplifyItem(Item item)
-        {
-            item.ItemData = null;
-        }
-        /// <summary>
-        /// 检查本地项目和数据库项目是否一致
-        /// </summary>
-        /// <param name="item">要检查的项目</param>
-        /// <returns>是否一致</returns>
-        public bool CheckItemConsistency(Item item)
-        {
-            if (item.ID == 0)
-                return false;
-            Item dbItem = new Item()
-            {
-                ID = item.ID,
-            };
-            EnrichItem(dbItem);
-            return ModelComparer.CompareItem(item, dbItem);
-        }
-        /// <summary>
         /// 更新项目的最近打开时间
         /// </summary>
         /// <param name="item">要更新时间的项目</param>

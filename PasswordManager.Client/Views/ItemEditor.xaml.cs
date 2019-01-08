@@ -24,24 +24,23 @@ namespace PasswordManager.Client.Views
     {
         public Data Data;
         public Item Item;
-
-        public List<ItemDataEditor> ItemDataEditors;
-
+        
         /// <summary>
         /// 项目被保存后触发
         /// </summary>
-        public event Action OnItemSaved;
+        public event Action<Item> OnItemSaved;
         /// <summary>
         /// 项目编辑结束，请求显示
         /// </summary>
         public event Action OnCancel;
 
+        private List<ItemDataEditor> ItemDataEditors;
         /// <summary>
         /// 项目是否已加载
         /// </summary>
         private bool IsItemLoaded;
         /// <summary>
-        /// 保存加载是传进来的项目
+        /// 保存加载时传进来的项目
         /// </summary>
         private Item LoadedItem;
 
@@ -62,6 +61,12 @@ namespace PasswordManager.Client.Views
             // 如果ItemDataEditors为空，则创建一个对象
             if (ItemDataEditors == null)
                 ItemDataEditors = new List<ItemDataEditor>();
+            Refresh();
+            IsItemLoaded = true;
+        }
+
+        public void Refresh()
+        {
             // 加载项目属性
             txtItemName.Text = Item.ItemName;
             // 显示自动输入提示文本
@@ -94,7 +99,6 @@ namespace PasswordManager.Client.Views
             stpItemData.Children.Clear();
             foreach (ItemDataEditor i in ItemDataEditors)
                 stpItemData.Children.Add(i);
-            IsItemLoaded = true;
         }
 
         /// <summary>
@@ -102,7 +106,7 @@ namespace PasswordManager.Client.Views
         /// </summary>
         public bool CanUnload()
         {
-            // 如果和数据库中的数据一致，则不用保存，直接退出
+            // 如果项目和加载时一致，则不用保存，直接退出
             if (ModelComparer.CompareItem(Item, LoadedItem))
                 return true;
             MessageBoxResult result = MessageBox.Show("是否保存更改？", "未保存退出确认", MessageBoxButton.YesNoCancel);
@@ -148,7 +152,7 @@ namespace PasswordManager.Client.Views
             }
             Data.SaveItem(Item);
             ModelCopier.CopyItem(Item, LoadedItem);
-            OnItemSaved?.Invoke();
+            OnItemSaved?.Invoke(Item);
             return true;
         }
 
@@ -170,7 +174,7 @@ namespace PasswordManager.Client.Views
                 if (i.IsSplitter)
                 {
                     if (count == 0)
-                        tbHint.Text = "于分割线出现在首位，自动登录将被禁用。";
+                        tbHint.Text = "由于分割线出现在首位，自动登录将被禁用。";
                     else
                         tbHint.Text = $"第一个分割线之前的 {count} 项将被应用于自动登录。";
                     return;
@@ -206,11 +210,18 @@ namespace PasswordManager.Client.Views
                 case 2:
                     // 用户确认操作
                     MessageBoxResult result = MessageBox.Show("此操作无法撤销，确定删除吗？", "删除警告", MessageBoxButton.OKCancel);
-                    if (result == MessageBoxResult.Cancel)
-                        return;
-                    Item.ItemData.RemoveAt(index);
-                    for (int i = index; i < Item.ItemData.Count; i++)
-                        Item.ItemData[i].Order = i;
+                    switch (result)
+                    {
+                        case MessageBoxResult.OK:
+                            Item.ItemData.RemoveAt(index);
+                            for (int i = index; i < Item.ItemData.Count; i++)
+                                Item.ItemData[i].Order = i;
+                            break;
+                        case MessageBoxResult.Cancel:
+                            return;
+                        default:
+                            throw new Exception("对话框返回结果无效！");
+                    }
                     break;
                 // 插入
                 case 3:
@@ -222,7 +233,7 @@ namespace PasswordManager.Client.Views
                     throw new Exception("列表操作类型无效！");
             }
 
-            Load();
+            Refresh();
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)

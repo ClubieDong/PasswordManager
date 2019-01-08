@@ -26,8 +26,7 @@ namespace PasswordManager.Client.Views
         public Settings Settings;
         public List<Category> Categories;
 
-        public List<CategoryShower> CategoryShowers;
-
+        private List<CategoryShower> CategoryShowers;
         // 要显示的时候才实例化，以节省内存空间
         private TextBlock tbEmpty;
 
@@ -57,7 +56,14 @@ namespace PasswordManager.Client.Views
             // 如果CategoryShowers为空，则创建一个对象
             if (CategoryShowers == null)
                 CategoryShowers = new List<CategoryShower>();
+            Refresh();
+        }
 
+        /// <summary>
+        /// 刷新数据
+        /// </summary>
+        public void Refresh()
+        {
             // 创建临时列表
             List<CategoryShower> localShowers = new List<CategoryShower>();
             foreach (Category i in Categories)
@@ -79,17 +85,15 @@ namespace PasswordManager.Client.Views
                     shower.OnDeleteItem += OnDeleteItem;
                     shower.OnDeleteCategory += DeleteCategory;
                     shower.OnMoveItem += MoveItem;
-                    shower.OnRenameCategory += n => Load();
+                    shower.OnRenameCategory += n => Refresh();
                 }
-                // shower也要（重新）加载一次
+                // shower也要重新加载一次
                 shower.Load();
                 // 添加进临时列表
                 localShowers.Add(shower);
             }
             // 临时列表转正
             CategoryShowers = localShowers;
-            // 根据搜索内容进行显示
-            Search();
 
             stpCategory.Children.Clear();
             // 如果没有类别，提示创建一个类别
@@ -112,6 +116,8 @@ namespace PasswordManager.Client.Views
             {
                 if (tbEmpty != null)
                     tbEmpty.Visibility = Visibility.Collapsed;
+                // 根据搜索内容进行显示
+                Search();
                 // 将列表显示到UI
                 foreach (CategoryShower i in CategoryShowers)
                     stpCategory.Children.Add(i);
@@ -124,20 +130,6 @@ namespace PasswordManager.Client.Views
         public void Unload()
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// 选中项目，由MainWindow来调用
-        /// </summary>
-        /// <param name="item">要选中的项目</param>
-        public void SelectItem(Item item)
-        {
-            // 先取消所有的选中项
-            foreach (CategoryShower i in CategoryShowers)
-                i.SelectItem(null);
-            // 如果item不为null，则找到它所在的类别，并选中它
-            if (item != null)
-                CategoryShowers.Find(n => n.Category == item.Category).SelectItem(item);
         }
 
         /// <summary>
@@ -171,7 +163,7 @@ namespace PasswordManager.Client.Views
             // 删除数据
             Data.RemoveCategory(category);
             // 重新加载
-            Load();
+            Refresh();
         }
 
         /// <summary>
@@ -183,7 +175,7 @@ namespace PasswordManager.Client.Views
         private void MoveItem(Item itemToMove, Category categoryTo)
         {
             Data.MoveItem(itemToMove, categoryTo);
-            Load();
+            Refresh();
         }
 
         private void TxtSearch_KeyDown(object sender, KeyEventArgs e)
@@ -208,7 +200,7 @@ namespace PasswordManager.Client.Views
             // 写入到数据库
             Data.AddCategory(category, Categories);
             // 重新加载
-            Load();
+            Refresh();
         }
     }
 }

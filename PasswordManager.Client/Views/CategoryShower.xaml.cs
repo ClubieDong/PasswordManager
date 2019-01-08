@@ -26,8 +26,7 @@ namespace PasswordManager.Client.Views
         public Settings Settings;
         public Category Category;
 
-        public List<ItemNameShower> ItemNameShowers;
-
+        private List<ItemNameShower> ItemNameShowers;
         // 需要显示的时候才进行实例化，以节省内存
         private TextBox txtRename;
         private TextBlock tbEmpty;
@@ -36,10 +35,6 @@ namespace PasswordManager.Client.Views
         /// 是否是处于重命名类别名称的模式
         /// </summary>
         private bool InRenameMode = false;
-        /// <summary>
-        /// 是否是由代码改变了ListBox选中项目
-        /// </summary>
-        private bool SelectedByCode = false;
 
         /// <summary>
         /// 请求显示项目
@@ -145,8 +140,6 @@ namespace PasswordManager.Client.Views
         private void ShowItemName(List<ItemNameShower> itemNameShowers)
         {
             // 清空原有项目
-            if (lstItemName.SelectedItem != null)
-                SelectedByCode = true;
             lstItemName.Items.Clear();
             // 判断是否有项目
             if (itemNameShowers.Count == 0)
@@ -173,20 +166,6 @@ namespace PasswordManager.Client.Views
                 lstItemName.Visibility = Visibility.Visible;
                 if (tbEmpty != null)
                     tbEmpty.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        /// <summary>
-        /// 选择项目，由CategoryList调用
-        /// </summary>
-        /// <param name="item">要选择的项目</param>
-        public void SelectItem(Item item)
-        {
-            ItemNameShower shower = ItemNameShowers.Find(n => n.Item == item);
-            if (lstItemName.SelectedItem != shower)
-            {
-                SelectedByCode = true;
-                lstItemName.SelectedItem = shower;
             }
         }
 
@@ -289,15 +268,15 @@ namespace PasswordManager.Client.Views
 
         private void LstItemName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // 如果是由代码改变的，则直接退出
-            if (SelectedByCode)
-            {
-                SelectedByCode = false;
+            // 如果没有选择内容，应该不是用户操作的，就直接退出
+            if (lstItemName.SelectedIndex==-1)
                 return;
-            }
             Item item = (lstItemName.SelectedItem as ItemNameShower).Item;
             Data.EnrichItem(item);
             OnSelectItem?.Invoke(item);
+            
+            // 每次点击之后都不选中，避免问题
+            lstItemName.SelectedIndex = -1;
         }
 
         private void MenuItemRename_Click(object sender, RoutedEventArgs e)
