@@ -50,6 +50,8 @@ namespace PasswordManager.Client.Views
             // 加载添加数据下拉框
             foreach (string i in ModelProvider.ItemDataNames)
                 cbxAdd.Items.Add(i);
+            // 选中空白项
+            cbxAdd.SelectedItem = "空白项";
             btnSave.Click += (s, e) => Save();
             btnCancel.Click += (s, e) => OnCancel?.Invoke();
         }
@@ -241,6 +243,14 @@ namespace PasswordManager.Client.Views
         {
             if (Item != null)
                 Item.ItemName = txtItemName.Text;
+        }
+
+        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            ItemData itemData = ModelProvider.GetItemData((string)cbxAdd.SelectedItem, Item);
+            itemData.Order = Item.ItemData.Count;
+            Item.ItemData.Add(itemData);
+            Refresh();
         }
     }
 }
