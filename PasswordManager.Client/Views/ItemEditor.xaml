@@ -37,9 +37,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="75"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="添加项目：" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="添加数据：" VerticalAlignment="Center"/>
             <ComboBox x:Name="cbxAdd" Grid.Column="1" VerticalContentAlignment="Center"/>
+            <Button x:Name="btnAdd" Grid.Column="3" Content="添加" Click="BtnAdd_Click"/>
         </Grid>
     </Grid>
 </UserControl>
