@@ -24,7 +24,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="cbxType" Grid.Column="0" VerticalContentAlignment="Center">
+        <ComboBox x:Name="cbxType" Grid.Column="0">
             <System:String>普通文本</System:String>
             <System:String>密码</System:String>
             <System:String>链接</System:String>
@@ -37,10 +37,10 @@
                     <ColumnDefinition Width="5"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="txtKey" Grid.Column="0" TextWrapping="Wrap" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" TextChanged="TxtKey_TextChanged"/>
+                <TextBox x:Name="txtKey" Grid.Column="0" HorizontalContentAlignment="Right" TextChanged="TxtKey_TextChanged"/>
                 <Grid Grid.Column="2">
-                    <PasswordBox x:Name="pwdData" Visibility="Hidden" VerticalContentAlignment="Center" PasswordChanged="PwdData_PasswordChanged"/>
-                    <TextBox x:Name="txtData" TextWrapping="Wrap" VerticalContentAlignment="Center" TextChanged="TxtData_TextChanged"/>
+                    <PasswordBox x:Name="pwdData" Visibility="Hidden" PasswordChanged="PwdData_PasswordChanged"/>
+                    <TextBox x:Name="txtData" TextChanged="TxtData_TextChanged"/>
                 </Grid>
             </Grid>
             <Grid x:Name="grdLine" Visibility="Hidden">
@@ -52,7 +52,7 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <Separator Grid.Column="0"/>
-                <TextBlock Grid.Column="2" Text="分割线" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="分割线"/>
                 <Separator Grid.Column="4"/>
             </Grid>
         </Grid>

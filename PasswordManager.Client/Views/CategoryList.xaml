@@ -19,8 +19,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="搜索：" FontSize="15" VerticalAlignment="Center"/>
-            <TextBox x:Name="txtSearch" Grid.Column="1" FontSize="15" TextWrapping="Wrap" KeyDown="TxtSearch_KeyDown" TextChanged="TxtSearch_TextChanged"/>
+            <TextBlock Grid.Column="0" Text="搜索：" FontSize="15"/>
+            <TextBox x:Name="txtSearch" Grid.Column="1" FontSize="15" KeyDown="TxtSearch_KeyDown" TextChanged="TxtSearch_TextChanged"/>
         </Grid>
         <Grid x:Name="grdCategory" Grid.Row="2">
             <StackPanel x:Name="stpCategory"/>

@@ -16,12 +16,12 @@
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="60"/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="tbKey" Grid.Column="0" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center"/>
-            <TextBlock x:Name="tbData" Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center"/>
-            <PasswordBox x:Name="pwdData" Grid.Column="1" Visibility="Collapsed" BorderThickness="0" VerticalContentAlignment="Center" Focusable="False" Cursor="Arrow" Password="**********"/>
-            <Button x:Name="btnShowOrOpen" Grid.Column="3" Background="{x:Null}" BorderBrush="{x:Null}"/>
-            <Button x:Name="btnCopy" Grid.Column="4" Content="复制" Background="{x:Null}" BorderBrush="{x:Null}"/>
-            <Button x:Name="btnAutoType" Grid.Column="5" Content="自动输入" Background="{x:Null}" BorderBrush="{x:Null}"/>
+            <TextBlock x:Name="tbKey" Grid.Column="0" HorizontalAlignment="Right"/>
+            <TextBlock x:Name="tbData" Grid.Column="1" HorizontalAlignment="Left"/>
+            <PasswordBox x:Name="pwdData" Grid.Column="1" Visibility="Collapsed" BorderThickness="0" Focusable="False" Cursor="Arrow" Password="**********"/>
+            <Button x:Name="btnShowOrOpen" Grid.Column="3"/>
+            <Button x:Name="btnCopy" Grid.Column="4" Content="复制"/>
+            <Button x:Name="btnAutoType" Grid.Column="5" Content="自动输入"/>
         </Grid>
         <Separator x:Name="splitter" Visibility="Collapsed"/>
     </Grid>

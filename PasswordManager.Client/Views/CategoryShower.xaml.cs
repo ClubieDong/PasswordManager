@@ -180,10 +180,7 @@ namespace PasswordManager.Client.Views
             // 如果是第一次进入重命名模式，创建实例
             if (txtRename == null)
             {
-                txtRename = new TextBox()
-                {
-                    TextWrapping = TextWrapping.Wrap,
-                };
+                txtRename = new TextBox();
                 txtRename.LostFocus += TxtRename_LostFocus;
                 txtRename.KeyDown += TxtRename_KeyDown;
                 grdHeader.Children.Add(txtRename);

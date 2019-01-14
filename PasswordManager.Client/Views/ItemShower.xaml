@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PasswordManager.Client.Views"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="600">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer>
         <StackPanel>
             <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
