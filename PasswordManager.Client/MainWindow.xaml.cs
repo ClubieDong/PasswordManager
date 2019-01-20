@@ -20,7 +20,7 @@ namespace PasswordManager.Client
     /// <summary>
     /// 主界面状态
     /// </summary>
-    enum MainWindowState
+    public enum MainWindowState
     {
         /// <summary>
         /// 锁定状态
@@ -47,7 +47,7 @@ namespace PasswordManager.Client
     /// <summary>
     /// 主界面操作
     /// </summary>
-    enum MainWindowOperation
+    public enum MainWindowOperation
     {
         /// <summary>
         /// 解锁

@@ -25,9 +25,7 @@ namespace PasswordManager.Client.Services
             item.ItemName = item.ItemName.Trim();
             // 如果数据不合法，返回错误信息
             if (item.ItemName == string.Empty)
-            {
                 return "项目名称不能为空";
-            }
             for (int i = 0; i < item.ItemData.Count; i++)
             {
                 string errorMessage = ValidateItemData(item.ItemData[i]);
@@ -43,38 +41,37 @@ namespace PasswordManager.Client.Services
         /// <returns>返回第一个不合法处的错误信息</returns>
         public static string ValidateItemData(ItemData itemData)
         {
-            // 如果是分割线
-            if (!itemData.IsPassword && !itemData.IsLink && itemData.IsSplitter)
+            switch (itemData.Type)
             {
-                // 去除冗余
-                itemData.Key = string.Empty;
-                itemData.Data = string.Empty;
-                itemData.PasswordRule = null;
-                return null;
-            }
-            // 如果是普通文本、密码或链接
-            if ((!itemData.IsPassword && !itemData.IsLink && !itemData.IsSplitter) || (itemData.IsPassword && !itemData.IsLink && !itemData.IsSplitter) || (!itemData.IsPassword && itemData.IsLink && !itemData.IsSplitter))
-            {
-                // 为空值创建实例
-                if (itemData.Key == null)
+                case ItemDataType.Normal:
+                case ItemDataType.Password:
+                case ItemDataType.Link:
+                    // 为空值创建实例
+                    if (itemData.Key == null)
+                        itemData.Key = string.Empty;
+                    if (itemData.Data == null)
+                        itemData.Data = string.Empty;
+                    // 去除首尾空格
+                    itemData.Key = itemData.Key.Trim();
+                    // 如果数据不合法，返回错误信息
+                    if (itemData.Key == string.Empty)
+                        return "数据名称不能为空！";
+                    if (itemData.PasswordRule != null)
+                    {
+                        string errorMessage = ValidatePasswordRule(itemData.PasswordRule);
+                        if (errorMessage != null)
+                            return "密码生成规则：" + errorMessage;
+                    }
+                    return null;
+                case ItemDataType.Splitter:
+                    // 去除冗余
                     itemData.Key = string.Empty;
-                if (itemData.Data == null)
                     itemData.Data = string.Empty;
-                // 去除首尾空格
-                itemData.Key = itemData.Key.Trim();
-                // 如果数据不合法，返回错误信息
-                if (itemData.Key == string.Empty)
-                    return "数据名称不能为空！";
-                if (itemData.PasswordRule != null)
-                {
-                    string errorMessage = ValidatePasswordRule(itemData.PasswordRule);
-                    if (errorMessage != null)
-                        return "密码生成规则：" + errorMessage;
-                }
-                return null;
+                    itemData.PasswordRule = null;
+                    return null;
+                default:
+                    throw new Exception("项目类别无效！");
             }
-            // 正常执行的代码不应该执行到这里，所以此处直接报错而不是返回错误信息
-            throw new Exception("项目类别无效！");
         }
 
         /// <summary>
@@ -84,9 +81,9 @@ namespace PasswordManager.Client.Services
         public static string ValidatePasswordRule(PasswordRule passwordRule)
         {
             // 如果数据不合法，返回错误信息
-            if (passwordRule.ID <= 0)
+            if (passwordRule.Length <= 0)
                 return "密码长度至少为1";
-            if (passwordRule.ID >= 64000)
+            if (passwordRule.Length >= 64000)
                 return "密码长度至多为63999";
             if (!passwordRule.AllowNumbers && !passwordRule.AllowNumbersFirst && passwordRule.LeastNumberCount > 0)
                 return "如果不允许出现数字，则至少出现的数字个数必须为0";

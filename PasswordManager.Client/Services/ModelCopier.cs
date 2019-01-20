@@ -64,9 +64,7 @@ namespace PasswordManager.Client.Services
                 Item = itemData.Item,
                 Key = itemData.Key,
                 Data = itemData.Data,
-                IsPassword = itemData.IsPassword,
-                IsLink = itemData.IsLink,
-                IsSplitter = itemData.IsSplitter,
+                Type = itemData.Type,
                 PasswordRule = CopyPasswordRule(itemData.PasswordRule),
             };
         }

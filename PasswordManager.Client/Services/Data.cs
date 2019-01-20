@@ -266,9 +266,7 @@ namespace PasswordManager.Client.Services
                         Item = item,
                         Key = Convert.ToString(reader["Key"]),
                         Data = Convert.ToString(reader["Data"]),
-                        IsPassword = Convert.ToBoolean(reader["IsPassword"]),
-                        IsLink = Convert.ToBoolean(reader["IsLink"]),
-                        IsSplitter = Convert.ToBoolean(reader["IsSplitter"]),
+                        Type = (ItemDataType)Convert.ToInt32(reader["Type"]),
                     };
                     item.ItemData.Add(itemData);
                 }
@@ -410,9 +408,7 @@ namespace PasswordManager.Client.Services
                 Command.Parameters.AddWithValue("ItemID", item.ID);
                 Command.Parameters.AddWithValue("Key", i.Key ?? string.Empty);
                 Command.Parameters.AddWithValue("Data", i.Data ?? string.Empty);
-                Command.Parameters.AddWithValue("IsPassword", i.IsPassword);
-                Command.Parameters.AddWithValue("IsLink", i.IsLink);
-                Command.Parameters.AddWithValue("IsSplitter", i.IsSplitter);
+                Command.Parameters.AddWithValue("IsPassword", i.Type);
                 Command.ExecuteNonQuery();
                 // 获取新添加的项目数据s的ID
                 Command.CommandText = "SELECT MAX([ID]) FROM [ItemData]";

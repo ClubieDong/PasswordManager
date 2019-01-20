@@ -36,39 +36,34 @@ namespace PasswordManager.Client.Views
         public void Load()
         {
             tbKey.Text = ItemData.Key + "：";
-            if (!ItemData.IsPassword && !ItemData.IsLink && !ItemData.IsSplitter)
+            switch (ItemData.Type)
             {
-                // 如果是普通数据
-                tbData.Text = ItemData.Data;
-                btnShowOrOpen.Visibility = Visibility.Hidden;
+                case ItemDataType.Normal:
+                    tbData.Text = ItemData.Data;
+                    btnShowOrOpen.Visibility = Visibility.Hidden;
+                    break;
+                case ItemDataType.Password:
+                    tbData.Text = ItemData.Data;
+                    tbData.Visibility = Visibility.Collapsed;
+                    pwdData.Visibility = Visibility.Visible;
+                    btnShowOrOpen.Content = "显示密码";
+                    btnShowOrOpen.Click += (s, e) => ShowOrHidePassword();
+                    break;
+                case ItemDataType.Link:
+                    Hyperlink link = new Hyperlink();
+                    link.Inlines.Add(ItemData.Data);
+                    tbData.Inlines.Add(link);
+                    btnShowOrOpen.Content = "打开链接";
+                    btnShowOrOpen.Click += (s, e) => OpenLink();
+                    link.Click += (s, e) => OpenLink();
+                    break;
+                case ItemDataType.Splitter:
+                    grdNotSplitter.Visibility = Visibility.Collapsed;
+                    splitter.Visibility = Visibility.Visible;
+                    break;
+                default:
+                    throw new Exception("项目数据类型无效！");
             }
-            else if (ItemData.IsPassword && !ItemData.IsLink && !ItemData.IsSplitter)
-            {
-                // 如果是密码，显示密码框
-                tbData.Text = ItemData.Data;
-                tbData.Visibility = Visibility.Collapsed;
-                pwdData.Visibility = Visibility.Visible;
-                btnShowOrOpen.Content = "显示密码";
-                btnShowOrOpen.Click += (s, e) => ShowOrHidePassword();
-            }
-            else if (!ItemData.IsPassword && ItemData.IsLink && !ItemData.IsSplitter)
-            {
-                // 如果是链接，创建超链接
-                Hyperlink link = new Hyperlink();
-                link.Inlines.Add(ItemData.Data);
-                tbData.Inlines.Add(link);
-                btnShowOrOpen.Content = "打开链接";
-                btnShowOrOpen.Click += (s, e) => OpenLink();
-                link.Click += (s, e) => OpenLink();
-            }
-            else if (!ItemData.IsPassword && !ItemData.IsLink && ItemData.IsSplitter)
-            {
-                // 如果是分割线，显示分割线
-                grdNotSplitter.Visibility = Visibility.Collapsed;
-                splitter.Visibility = Visibility.Visible;
-            }
-            else
-                throw new Exception("项目数据类型无效！");
         }
 
         /// <summary>

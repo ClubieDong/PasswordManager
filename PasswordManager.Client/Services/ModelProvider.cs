@@ -135,26 +135,26 @@ namespace PasswordManager.Client.Services
                 case "空白项":
                     break;
                 case "分割线":
-                    result.IsSplitter = true;
+                    result.Type = ItemDataType.Splitter;
                     break;
                 case "用户名":
                     result.Key = "用户名";
                     break;
                 case "密码":
                     result.Key = "密码";
-                    result.IsPassword = true;
+                    result.Type = ItemDataType.Password;
                     break;
                 case "网站":
                     result.Key = "网站";
-                    result.IsLink = true;
+                    result.Type = ItemDataType.Link;
                     break;
                 case "文件":
                     result.Key = "文件";
-                    result.IsLink = true;
+                    result.Type = ItemDataType.Link;
                     break;
                 case "文件夹":
                     result.Key = "文件夹";
-                    result.IsLink = true;
+                    result.Type = ItemDataType.Link;
                     break;
                 case "备注":
                     result.Key = "备注";
@@ -170,7 +170,7 @@ namespace PasswordManager.Client.Services
                     break;
                 case "密保答案":
                     result.Key = "密保答案";
-                    result.IsPassword = true;
+                    result.Type = ItemDataType.Password;
                     break;
                 default:
                     throw new Exception("无效的名称！");

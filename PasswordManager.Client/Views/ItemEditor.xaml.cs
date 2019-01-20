@@ -144,10 +144,21 @@ namespace PasswordManager.Client.Views
         }
 
         /// <summary>
+        /// 将文本框的数据保存到项目实例
+        /// </summary>
+        public void GetData()
+        {
+            Item.ItemName = txtItemName.Text;
+            foreach (ItemDataEditor i in ItemDataEditors)
+                i.GetData();
+        }
+
+        /// <summary>
         /// 保存项目
         /// </summary>
         public bool Save()
         {
+            GetData();
             string errorMessage = ModelValidator.ValidateItem(Item);
             if (errorMessage != null)
             {
@@ -174,7 +185,7 @@ namespace PasswordManager.Client.Views
             int count = 0;
             foreach (ItemData i in Item.ItemData)
             {
-                if (i.IsSplitter)
+                if (i.Type == ItemDataType.Splitter)
                 {
                     if (count == 0)
                         tbHint.Text = "由于分割线出现在首位，自动登录将被禁用。";
@@ -237,12 +248,6 @@ namespace PasswordManager.Client.Views
             }
 
             Refresh();
-        }
-
-        private void TxtItemName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (Item != null)
-                Item.ItemName = txtItemName.Text;
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)

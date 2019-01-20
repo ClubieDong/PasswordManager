@@ -40,7 +40,7 @@ namespace PasswordManager.Client.Views
         public ItemDataEditor()
         {
             InitializeComponent();
-            cbxType.SelectionChanged += (s, e) => ChangeType(cbxType.SelectedIndex);
+            cbxType.SelectionChanged += (s, e) => SwitchType((ItemDataType)cbxType.SelectedIndex);
             btnMoveUp.Click += (s, e) => OnListOperation?.Invoke(0, ItemData);
             btnMoveDown.Click += (s, e) => OnListOperation?.Invoke(1, ItemData);
             btnDelete.Click += (s, e) => OnListOperation?.Invoke(2, ItemData);
@@ -52,90 +52,98 @@ namespace PasswordManager.Client.Views
         /// </summary>
         public void Load()
         {
-            // 普通数据
-            if (!ItemData.IsPassword && !ItemData.IsLink && !ItemData.IsSplitter)
-                cbxType.SelectedIndex = 0;
-            // 密码
-            else if (ItemData.IsPassword && !ItemData.IsLink && !ItemData.IsSplitter)
-                cbxType.SelectedIndex = 1;
-            // 链接
-            else if (!ItemData.IsPassword && ItemData.IsLink && !ItemData.IsSplitter)
-                cbxType.SelectedIndex = 2;
-            // 分割线
-            else if (!ItemData.IsPassword && !ItemData.IsLink && ItemData.IsSplitter)
-                cbxType.SelectedIndex = 3;
-            else
-                throw new Exception("项目数据类型无效！");
+            SetData();
             btnMoveUp.IsEnabled = ItemData.Order > 0;
             btnMoveDown.IsEnabled = ItemData.Order < ItemData.Item.ItemData.Count - 1;
             btnDelete.IsEnabled = ItemData.Item.ItemData.Count > 1;
         }
 
         /// <summary>
-        /// 更改项目数据的类型
+        /// 将文本框的数据保存到项目数据实例
         /// </summary>
-        /// <param name="comboBoxIndex"></param>
-        private void ChangeType(int comboBoxIndex) 
+        public void GetData()
         {
-            switch (comboBoxIndex)
+            switch (ItemData.Type)
             {
-                // 普通文本
-                case 0:
-                    ItemData.IsPassword = false;
-                    ItemData.IsLink = false;
-                    ItemData.IsSplitter = false;
+                case ItemDataType.Normal:
+                case ItemDataType.Link:
+                    ItemData.Key = txtKey.Text;
+                    ItemData.Data = txtData.Text;
+                    break;
+                case ItemDataType.Password:
+                    ItemData.Key = txtKey.Text;
+                    ItemData.Data = pwdData.Password;
+                    break;
+                case ItemDataType.Splitter:
+                    break;
+                default:
+                    throw new Exception("项目数据类型无效！");
+            }
+        }
+
+        /// <summary>
+        /// 将项目数据显示到文本框
+        /// </summary>
+        public void SetData()
+        {
+            switch (ItemData.Type)
+            {
+                case ItemDataType.Normal:
+                    txtKey.Text = ItemData.Key;
+                    txtData.Text = ItemData.Data;
                     grdText.Visibility = Visibility.Visible;
                     grdLine.Visibility = Visibility.Hidden;
                     txtData.Visibility = Visibility.Visible;
                     pwdData.Visibility = Visibility.Hidden;
                     btnGenerate.Visibility = Visibility.Hidden;
                     btnShowOrOpen.Visibility = Visibility.Hidden;
-                    txtKey.Text = ItemData.Key;
-                    txtData.Text = ItemData.Data;
                     break;
-                // 密码
-                case 1:
-                    ItemData.IsPassword = true;
-                    ItemData.IsLink = false;
-                    ItemData.IsSplitter = false;
+                case ItemDataType.Password:
+                    txtKey.Text = ItemData.Key;
+                    pwdData.Password = ItemData.Data;
+                    btnShowOrOpen.Content = "显示";
                     grdText.Visibility = Visibility.Visible;
                     grdLine.Visibility = Visibility.Hidden;
                     txtData.Visibility = Visibility.Hidden;
                     pwdData.Visibility = Visibility.Visible;
                     btnGenerate.Visibility = Visibility.Visible;
                     btnShowOrOpen.Visibility = Visibility.Visible;
-                    btnShowOrOpen.Content = "显示";
-                    txtKey.Text = ItemData.Key;
-                    pwdData.Password = ItemData.Data;
                     break;
-                // 链接
-                case 2:
-                    ItemData.IsPassword = false;
-                    ItemData.IsLink = true;
-                    ItemData.IsSplitter = false;
+                case ItemDataType.Link:
+                    txtKey.Text = ItemData.Key;
+                    txtData.Text = ItemData.Data;
+                    btnShowOrOpen.Content = "打开";
                     grdText.Visibility = Visibility.Visible;
                     grdLine.Visibility = Visibility.Hidden;
                     txtData.Visibility = Visibility.Visible;
                     pwdData.Visibility = Visibility.Hidden;
                     btnGenerate.Visibility = Visibility.Hidden;
                     btnShowOrOpen.Visibility = Visibility.Visible;
-                    btnShowOrOpen.Content = "打开";
-                    txtKey.Text = ItemData.Key;
-                    txtData.Text = ItemData.Data;
                     break;
-                // 分割线
-                case 3:
-                    ItemData.IsPassword = false;
-                    ItemData.IsLink = false;
-                    ItemData.IsSplitter = true;
+                case ItemDataType.Splitter:
                     grdText.Visibility = Visibility.Hidden;
                     grdLine.Visibility = Visibility.Visible;
                     btnGenerate.Visibility = Visibility.Hidden;
                     btnShowOrOpen.Visibility = Visibility.Hidden;
                     break;
                 default:
-                    throw new Exception("类型索性无效！");
+                    throw new Exception("项目数据类型无效！");
             }
+            cbxType.SelectedIndex = (int)ItemData.Type;
+        }
+
+        /// <summary>
+        /// 更改项目数据的类型
+        /// </summary>
+        /// <param name="comboBoxIndex"></param>
+        private void SwitchType(ItemDataType type)
+        {
+            // 如果是同一种类型就直接退出，一般遇到这种情况就是由SetData()触发的。
+            if (type == ItemData.Type)
+                return;
+            GetData();
+            ItemData.Type = type;
+            SetData();
             TypeChanged?.Invoke();
         }
 
@@ -195,21 +203,6 @@ namespace PasswordManager.Client.Views
                 default:
                     throw new Exception("按钮文本无效！");
             }
-        }
-
-        private void TxtKey_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ItemData.Key = txtKey.Text;
-        }
-
-        private void PwdData_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            ItemData.Data = pwdData.Password;
-        }
-
-        private void TxtData_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ItemData.Data = txtData.Text;
         }
     }
 }

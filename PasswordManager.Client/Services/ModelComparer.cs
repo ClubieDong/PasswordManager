@@ -41,7 +41,7 @@ namespace PasswordManager.Client.Services
             if (itemData1 == null || itemData2 == null)
                 return false;
             // 比较属性
-            if (!(itemData1.Key == itemData2.Key && itemData1.Data == itemData2.Data && itemData1.IsPassword == itemData2.IsPassword && itemData1.IsLink == itemData2.IsLink && itemData1.IsSplitter == itemData2.IsSplitter && ComparePasswordRule(itemData1.PasswordRule, itemData2.PasswordRule)))
+            if (!(itemData1.Key == itemData2.Key && itemData1.Data == itemData2.Data && itemData1.Type==itemData2.Type && ComparePasswordRule(itemData1.PasswordRule, itemData2.PasswordRule)))
                 return false;
             return true;
         }

@@ -37,10 +37,10 @@
                     <ColumnDefinition Width="5"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="txtKey" Grid.Column="0" HorizontalContentAlignment="Right" TextChanged="TxtKey_TextChanged"/>
+                <TextBox x:Name="txtKey" Grid.Column="0" HorizontalContentAlignment="Right"/>
                 <Grid Grid.Column="2">
-                    <PasswordBox x:Name="pwdData" Visibility="Hidden" PasswordChanged="PwdData_PasswordChanged"/>
-                    <TextBox x:Name="txtData" TextChanged="TxtData_TextChanged"/>
+                    <PasswordBox x:Name="pwdData" Visibility="Hidden"/>
+                    <TextBox x:Name="txtData"/>
                 </Grid>
             </Grid>
             <Grid x:Name="grdLine" Visibility="Hidden">
