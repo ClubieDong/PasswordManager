@@ -56,7 +56,7 @@
                 <Separator Grid.Column="4"/>
             </Grid>
         </Grid>
-        <Button x:Name="btnGenerate" Grid.Column="4" Content="生成"/>
+        <Button x:Name="btnGenerate" Grid.Column="4" Content="生成" Click="BtnGenerate_Click"/>
         <Button x:Name="btnShowOrOpen" Grid.Column="5" Content="显示" Click="BtnShowOrOpen_Click"/>
         <Button x:Name="btnMoveUp" Grid.Column="6" Content="上移"/>
         <Button x:Name="btnMoveDown" Grid.Column="7" Content="下移"/>

@@ -29,11 +29,11 @@ namespace PasswordManager.Client.Services
             /// <summary>
             /// 忽略大小写的字符串集合
             /// </summary>
-            public HashSet<string> IgnoreCases;
+            public HashSet<string> IgnoreCase;
             /// <summary>
             /// 区分大小写的字符串集合
             /// </summary>
-            public HashSet<string> DistinguishCases;
+            public HashSet<string> DistinguishCase;
         }
 
         private const string NumbersString = "0123456789";
@@ -142,8 +142,8 @@ namespace PasswordManager.Client.Services
 
             return new BannedStrings()
             {
-                IgnoreCases = ignoreCases,
-                DistinguishCases = distinguishCases,
+                IgnoreCase = ignoreCases,
+                DistinguishCase = distinguishCases,
             };
         }
 
@@ -315,8 +315,8 @@ namespace PasswordManager.Client.Services
         private static bool CheckValidity(PasswordRule passwordRule, string password, BannedStrings bannedStrings)
         {
             // 分别判断忽略大小写和区分大小写是否合法
-            return CheckValidity(passwordRule, password, bannedStrings.DistinguishCases) &&
-                CheckValidity(passwordRule, password.ToUpper(), bannedStrings.IgnoreCases);
+            return CheckValidity(passwordRule, password, bannedStrings.DistinguishCase) &&
+                CheckValidity(passwordRule, password.ToUpper(), bannedStrings.IgnoreCase);
         }
 
         /// <summary>

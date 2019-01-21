@@ -96,6 +96,7 @@ namespace PasswordManager.Client.Services
                 result.SearchWhenTextChange = Convert.ToBoolean(reader["SearchWhenTextChange"]);
                 result.SearchIgnoreCase = Convert.ToBoolean(reader["SearchIgnoreCase"]);
                 result.SearchIncludeData = Convert.ToBoolean(reader["SearchIncludeData"]);
+                result.GeneratorTryCount = Convert.ToInt32(reader["GeneratorTryCount"]);
             }
 
             return result;
@@ -304,9 +305,9 @@ namespace PasswordManager.Client.Services
                         BanRepeatedCharacters = Convert.ToBoolean(reader["BanRepeatedCharacters"]),
                         BanContinuousRepeatedCharacters = Convert.ToBoolean(reader["BanContinuousRepeatedCharacters"]),
                         BanContinuousRepeatedCharacterCount = Convert.ToInt32(reader["BanContinuousRepeatedCharacterCount"]),
-                        BannedCharactersIgnoreCase = Convert.ToBoolean(reader["BannedCharactersIgnoreCases"]),
-                        BannedStringsIgnoreCase = Convert.ToBoolean(reader["BannedStringsIgnoreCases"]),
-                        BannedContinuousCharactersIgnoreCase = Convert.ToBoolean(reader["BannedContinuousCharactersIgnoreCases"]),
+                        BannedCharactersIgnoreCase = Convert.ToBoolean(reader["BannedCharactersIgnoreCase"]),
+                        BannedStringsIgnoreCase = Convert.ToBoolean(reader["BannedStringsIgnoreCase"]),
+                        BannedContinuousCharactersIgnoreCase = Convert.ToBoolean(reader["BannedContinuousCharactersIgnoreCase"]),
                     };
                 }
             }
@@ -402,13 +403,13 @@ namespace PasswordManager.Client.Services
             // 重新添加项目数据
             foreach (ItemData i in item.ItemData)
             {
-                Command.CommandText = "INSERT INTO [ItemData] ([Order], [ItemID], [Key], [Data], [IsPassword], [IsLink], [IsSplitter]) VALUES (@Order, @ItemID, @Key, @Data, @IsPassword, @IsLink, @IsSplitter)";
+                Command.CommandText = "INSERT INTO [ItemData] ([Order], [ItemID], [Key], [Data], [Type]) VALUES (@Order, @ItemID, @Key, @Data, @Type)";
                 Command.Parameters.Clear();
                 Command.Parameters.AddWithValue("Order", i.Order);
                 Command.Parameters.AddWithValue("ItemID", item.ID);
                 Command.Parameters.AddWithValue("Key", i.Key ?? string.Empty);
                 Command.Parameters.AddWithValue("Data", i.Data ?? string.Empty);
-                Command.Parameters.AddWithValue("IsPassword", i.Type);
+                Command.Parameters.AddWithValue("Type", i.Type);
                 Command.ExecuteNonQuery();
                 // 获取新添加的项目数据s的ID
                 Command.CommandText = "SELECT MAX([ID]) FROM [ItemData]";
@@ -416,8 +417,9 @@ namespace PasswordManager.Client.Services
                 // 如果有密码生成规则，添加密码生成规则
                 if (i.PasswordRule != null)
                 {
-                    Command.CommandText = "INSERT INTO [PasswordRules] ([Length], [AllowNumbers], [AllowUpperCases], [AllowLowerCases], [AllowSpecialCharacters], [AllowNumbersFirst], [AllowUpperCasesFirst], [AllowLowerCasesFirst], [AllowSpecialCharactersFirst], [LeastNumberCount], [LeastUpperCaseCount], [LeastLowerCaseCount], [LeastSpecialCharacterCount], [BannedCharacters], [BannedStrings], [BannedContinuousCharacters], [BanRepeatedCharacters], [BanContinuousRepeatedCharacters], [BanContinuousRepeatedCharacterCount], [BannedCharactersIgnoreCases], [BannedStringsIgnoreCases], [BannedContinuousCharactersIgnoreCases]) VALUES (@ItemDataID, @Length, @AllowNumbers, @AllowUpperCases, @AllowLowerCases, @AllowSpecialCharacters, @AllowNumbersFirst, @AllowUpperCasesFirst, @AllowLowerCasesFirst, @AllowSpecialCharactersFirst, @LeastNumberCount, @LeastUpperCaseCount, @LeastLowerCaseCount, @LeastSpecialCharacterCount, @BannedCharacters, @BannedStrings, @BannedContinuousCharacters, @BanRepeatedCharacters, @BanContinuousRepeatedCharacters, @BanContinuousRepeatedCharacterCount, @BannedCharactersIgnoreCases, @BannedStringsIgnoreCases, @BannedContinuousCharactersIgnoreCases)";
+                    Command.CommandText = "INSERT INTO [PasswordRules] ([ItemDataID], [Length], [AllowNumbers], [AllowUpperCases], [AllowLowerCases], [AllowSpecialCharacters], [AllowNumbersFirst], [AllowUpperCasesFirst], [AllowLowerCasesFirst], [AllowSpecialCharactersFirst], [LeastNumberCount], [LeastUpperCaseCount], [LeastLowerCaseCount], [LeastSpecialCharacterCount], [BannedCharacters], [BannedStrings], [BannedContinuousCharacters], [BanRepeatedCharacters], [BanContinuousRepeatedCharacters], [BanContinuousRepeatedCharacterCount], [BannedCharactersIgnoreCase], [BannedStringsIgnoreCase], [BannedContinuousCharactersIgnoreCase]) VALUES (@ItemDataID, @Length, @AllowNumbers, @AllowUpperCases, @AllowLowerCases, @AllowSpecialCharacters, @AllowNumbersFirst, @AllowUpperCasesFirst, @AllowLowerCasesFirst, @AllowSpecialCharactersFirst, @LeastNumberCount, @LeastUpperCaseCount, @LeastLowerCaseCount, @LeastSpecialCharacterCount, @BannedCharacters, @BannedStrings, @BannedContinuousCharacters, @BanRepeatedCharacters, @BanContinuousRepeatedCharacters, @BanContinuousRepeatedCharacterCount, @BannedCharactersIgnoreCase, @BannedStringsIgnoreCase, @BannedContinuousCharactersIgnoreCase)";
                     Command.Parameters.Clear();
+                    Command.Parameters.AddWithValue("ItemDataID", i.ID);
                     Command.Parameters.AddWithValue("Length", i.PasswordRule.Length);
                     Command.Parameters.AddWithValue("AllowNumbers", i.PasswordRule.AllowNumbers);
                     Command.Parameters.AddWithValue("AllowUpperCases", i.PasswordRule.AllowUpperCases);
@@ -437,9 +439,9 @@ namespace PasswordManager.Client.Services
                     Command.Parameters.AddWithValue("BanRepeatedCharacters", i.PasswordRule.BanRepeatedCharacters);
                     Command.Parameters.AddWithValue("BanContinuousRepeatedCharacters", i.PasswordRule.BanContinuousRepeatedCharacters);
                     Command.Parameters.AddWithValue("BanContinuousRepeatedCharacterCount", i.PasswordRule.BanContinuousRepeatedCharacterCount);
-                    Command.Parameters.AddWithValue("BannedCharactersIgnoreCases", i.PasswordRule.BannedCharactersIgnoreCase);
-                    Command.Parameters.AddWithValue("BannedStringsIgnoreCases", i.PasswordRule.BannedStringsIgnoreCase);
-                    Command.Parameters.AddWithValue("BannedContinuousCharactersIgnoreCases", i.PasswordRule.BannedContinuousCharactersIgnoreCase);
+                    Command.Parameters.AddWithValue("BannedCharactersIgnoreCase", i.PasswordRule.BannedCharactersIgnoreCase);
+                    Command.Parameters.AddWithValue("BannedStringsIgnoreCase", i.PasswordRule.BannedStringsIgnoreCase);
+                    Command.Parameters.AddWithValue("BannedContinuousCharactersIgnoreCase", i.PasswordRule.BannedContinuousCharactersIgnoreCase);
                     Command.ExecuteNonQuery();
                     // 获取并返回新添加的密码规则的ID
                     Command.CommandText = "SELECT MAX([ID]) FROM [PasswordRules]";

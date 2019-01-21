@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PasswordManager.Client.Services;
 
 namespace PasswordManager.Client.Views
 {
@@ -26,25 +27,26 @@ namespace PasswordManager.Client.Views
 
         /// <summary>
         /// 请求进行列表操作
-        /// 0: 上移
-        /// 1: 下移
-        /// 2: 删除
-        /// 3: 插入
         /// </summary>
-        public event Action<int, ItemData> OnListOperation;
+        public event Action<ListOperationType, ItemData> OnListOperation;
         /// <summary>
         /// 数据类型被改变
         /// </summary>
         public event Action TypeChanged;
 
+        // 要显示的时候才实例化，以节省内存空间
+        private Generator Generator;
+
         public ItemDataEditor()
         {
             InitializeComponent();
             cbxType.SelectionChanged += (s, e) => SwitchType((ItemDataType)cbxType.SelectedIndex);
-            btnMoveUp.Click += (s, e) => OnListOperation?.Invoke(0, ItemData);
-            btnMoveDown.Click += (s, e) => OnListOperation?.Invoke(1, ItemData);
-            btnDelete.Click += (s, e) => OnListOperation?.Invoke(2, ItemData);
-            btnInsert.Click += (s, e) => OnListOperation?.Invoke(3, ItemData);
+            btnMoveUp.Click += (s, e) => OnListOperation?.Invoke(ListOperationType.MoveUp, ItemData);
+            btnMoveDown.Click += (s, e) => OnListOperation?.Invoke(ListOperationType.MoveDown, ItemData);
+            btnDelete.Click += (s, e) => OnListOperation?.Invoke(ListOperationType.Delete, ItemData);
+            btnInsert.Click += (s, e) => OnListOperation?.Invoke(ListOperationType.Insert, ItemData);
+            txtData.TextChanged += (s, e) => pwdData.Password = txtData.Text;
+            pwdData.PasswordChanged += (s, e) => txtData.Text = pwdData.Password;
         }
 
         /// <summary>
@@ -63,22 +65,9 @@ namespace PasswordManager.Client.Views
         /// </summary>
         public void GetData()
         {
-            switch (ItemData.Type)
-            {
-                case ItemDataType.Normal:
-                case ItemDataType.Link:
-                    ItemData.Key = txtKey.Text;
-                    ItemData.Data = txtData.Text;
-                    break;
-                case ItemDataType.Password:
-                    ItemData.Key = txtKey.Text;
-                    ItemData.Data = pwdData.Password;
-                    break;
-                case ItemDataType.Splitter:
-                    break;
-                default:
-                    throw new Exception("项目数据类型无效！");
-            }
+            ItemData.Key = txtKey.Text;
+            ItemData.Data = txtData.Text;
+            Generator?.GetData();
         }
 
         /// <summary>
@@ -86,11 +75,11 @@ namespace PasswordManager.Client.Views
         /// </summary>
         public void SetData()
         {
+            txtKey.Text = ItemData.Key;
+            txtData.Text = ItemData.Data;
             switch (ItemData.Type)
             {
                 case ItemDataType.Normal:
-                    txtKey.Text = ItemData.Key;
-                    txtData.Text = ItemData.Data;
                     grdText.Visibility = Visibility.Visible;
                     grdLine.Visibility = Visibility.Hidden;
                     txtData.Visibility = Visibility.Visible;
@@ -99,8 +88,6 @@ namespace PasswordManager.Client.Views
                     btnShowOrOpen.Visibility = Visibility.Hidden;
                     break;
                 case ItemDataType.Password:
-                    txtKey.Text = ItemData.Key;
-                    pwdData.Password = ItemData.Data;
                     btnShowOrOpen.Content = "显示";
                     grdText.Visibility = Visibility.Visible;
                     grdLine.Visibility = Visibility.Hidden;
@@ -110,8 +97,6 @@ namespace PasswordManager.Client.Views
                     btnShowOrOpen.Visibility = Visibility.Visible;
                     break;
                 case ItemDataType.Link:
-                    txtKey.Text = ItemData.Key;
-                    txtData.Text = ItemData.Data;
                     btnShowOrOpen.Content = "打开";
                     grdText.Visibility = Visibility.Visible;
                     grdLine.Visibility = Visibility.Hidden;
@@ -147,44 +132,34 @@ namespace PasswordManager.Client.Views
             TypeChanged?.Invoke();
         }
 
-        /// <summary>
-        /// 显示或隐藏密码
-        /// </summary>
-        private void ShowOrHidePassword()
+        private void BtnGenerate_Click(object sender, RoutedEventArgs e)
         {
-            // 通过按钮标题来判断现在密码是否显示
-            switch ((string)btnShowOrOpen.Content)
+            // 根据按钮文本路由方法
+            switch ((string)btnGenerate.Content)
             {
-                case "显示":
-                    txtData.Visibility = Visibility.Visible;
-                    pwdData.Visibility = Visibility.Collapsed;
-                    txtData.Text = ItemData.Data;
-                    btnShowOrOpen.Content = "隐藏";
+                case "生成":
+                    if (ItemData.PasswordRule == null)
+                        ItemData.PasswordRule = new PasswordRule();
+                    if (Generator == null)
+                    {
+                        Generator = new Generator();
+                        Generator.OnGenerated += (password) => txtData.Text = password;
+                        Generator.PasswordRule = ItemData.PasswordRule;
+                        Generator.Load();
+                        Grid.SetRow(Generator, 1);
+                        Grid.SetColumn(Generator, 2);
+                        grdMain.Children.Add(Generator);
+                    }
+                    else
+                        Generator.Visibility = Visibility.Visible;
+                    btnGenerate.Content = "收起";
                     break;
-                case "隐藏":
-                    txtData.Visibility = Visibility.Collapsed;
-                    pwdData.Visibility = Visibility.Visible;
-                    pwdData.Password = ItemData.Data;
-                    btnShowOrOpen.Content = "显示";
+                case "收起":
+                    Generator.Visibility = Visibility.Collapsed;
+                    btnGenerate.Content = "生成";
                     break;
                 default:
                     throw new Exception("按钮文本无效！");
-            }
-        }
-
-        /// <summary>
-        /// 打开连接
-        /// </summary>
-        private void OpenLink()
-        {
-            try
-            {
-                Process.Start(ItemData.Data);
-            }
-            catch (Exception)
-            {
-                // 如果打开失败，报错
-                MessageBox.Show("无法打开链接！");
             }
         }
 
@@ -194,11 +169,25 @@ namespace PasswordManager.Client.Views
             switch ((string)btnShowOrOpen.Content)
             {
                 case "打开":
-                    OpenLink();
+                    try
+                    {
+                        Process.Start(ItemData.Data);
+                    }
+                    catch (Exception)
+                    {
+                        // 如果打开失败，报错
+                        MessageBox.Show("无法打开链接！");
+                    }
                     break;
                 case "显示":
+                    txtData.Visibility = Visibility.Visible;
+                    pwdData.Visibility = Visibility.Collapsed;
+                    btnShowOrOpen.Content = "隐藏";
+                    break;
                 case "隐藏":
-                    ShowOrHidePassword();
+                    txtData.Visibility = Visibility.Collapsed;
+                    pwdData.Visibility = Visibility.Visible;
+                    btnShowOrOpen.Content = "显示";
                     break;
                 default:
                     throw new Exception("按钮文本无效！");

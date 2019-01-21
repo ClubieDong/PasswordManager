@@ -30,7 +30,7 @@ namespace PasswordManager.Client.Services
         }
 
         /// <summary>
-        /// 比较项目数据是否相同（仅比较Key、Data、IsPassword、IsLink、IsSplitter、PasswordRule）
+        /// 比较项目数据是否相同（仅比较Key、Data、Type、PasswordRule）
         /// </summary>
         public static bool CompareItemData(ItemData itemData1, ItemData itemData2)
         {

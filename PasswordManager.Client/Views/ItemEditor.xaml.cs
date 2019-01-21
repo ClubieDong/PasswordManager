@@ -18,6 +18,17 @@ using System.Windows.Shapes;
 namespace PasswordManager.Client.Views
 {
     /// <summary>
+    /// 列表操作类型
+    /// </summary>
+    public enum ListOperationType
+    {
+        MoveUp,
+        MoveDown,
+        Delete,
+        Insert,
+    }
+
+    /// <summary>
     /// ItemEditor.xaml 的交互逻辑
     /// </summary>
     public partial class ItemEditor : UserControl
@@ -204,24 +215,21 @@ namespace PasswordManager.Client.Views
         /// </summary>
         /// <param name="operationType">操作类型。0: 上移 1: 下移 2: 删除 3: 插入</param>
         /// <param name="itemData">操作相关的项目数据</param>
-        private void ItemDataListOperation(int operationType, ItemData itemData)
+        private void ItemDataListOperation(ListOperationType type, ItemData itemData)
         {
             int index = Item.ItemData.IndexOf(itemData);
             if (index == -1)
                 throw new Exception("找不到项目数据！");
 
-            switch (operationType)
+            switch (type)
             {
-                // 上移
-                case 0:
+                case ListOperationType.MoveUp:
                     Data.MoveUp(Item.ItemData, index);
                     break;
-                // 下移
-                case 1:
+                case ListOperationType.MoveDown:
                     Data.MoveDown(Item.ItemData, index);
                     break;
-                // 删除
-                case 2:
+                case ListOperationType.Delete:
                     // 用户确认操作
                     MessageBoxResult result = MessageBox.Show("此操作无法撤销，确定删除吗？", "删除警告", MessageBoxButton.OKCancel);
                     switch (result)
@@ -237,8 +245,7 @@ namespace PasswordManager.Client.Views
                             throw new Exception("对话框返回结果无效！");
                     }
                     break;
-                // 插入
-                case 3:
+                case ListOperationType.Insert:
                     Item.ItemData.Insert(index, ModelProvider.GetItemData("空白项", Item));
                     for (int i = index; i < Item.ItemData.Count; i++)
                         Item.ItemData[i].Order = i;

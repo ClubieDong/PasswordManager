@@ -23,5 +23,9 @@ namespace PasswordManager.Client.Models
         /// 搜索时是否忽略大小写
         /// </summary>
         public bool SearchIgnoreCase;
+        /// <summary>
+        /// 生成密码时尝试次数
+        /// </summary>
+        public int GeneratorTryCount;
     }
 }
